@@ -1,0 +1,513 @@
+import datetime
+import random
+import time
+import colorama
+from discord import guild
+import discord
+import requests
+from bs4 import BeautifulSoup
+from colorama import Fore
+from discord.utils import get
+from selenium import webdriver
+
+log_id = 863696601338871818
+fortune = ["Das klingt nach einer guten Idee","Ich habe noch nie so etwas dummes gehöhrt","Ja","Nein"]
+jokes = ["""
+#001
+Lehrer: Was sind deine Ziele in der Schule? \n
+Schüler: Die Pause \n
+Lehrer: Nein ich meine Langfristick \n
+Schüler: Schultag ende
+Lehrer: Mit dieser Ein stellung wirst du noch lange in Der Schule bleiben
+Schüler: Müssen sie mit 40 in Der Schule gerade sagen
+Schüler:😎😎😎😎😎😎😎
+""",
+"""
+#002
+Was macht ein Türke beim Fußball, wenn er eine Ecke bekommt? - Er eröffnet einen Dönerladen
+""","""
+#003
+Ich konnte es nicht fassen. Mein Nachbar hat tatsächlich noch um 3 Uhr Nachts bei uns geklingelt. Mir wäre fast die Bohrmaschine runtergefallen.
+""","""
+#004
+Meine Frau will mit mir über mein kindisches Verhalten reden.
+
+ Tja, aber ohne das Geheimwort kommt sie nicht in meine Kissenburg.
+""","""
+#005
+Gehen zwei Eskimos nach Hause.
+
+Fragt der eine den anderen: Wo ist eigentlich dein Iglu?
+-
+Erschrickt der andere: Oh nein, ich hab' das Bügeleisen angelassen!
+
+""","""
+#006
+Mathe und Deutsch sind meine drei gutesten Fächer
+""","""
+#007
+Mama, der Weihnachtsbaum brennt. Ach Kind, das heißt, der Tannenbaum leuchtet. Ok, Mama. Jetzt leuchten die Vorhänge auch.
+
+""","""
+#008
+Wie heißen die drei Sinne ? Schwachsinn ,Unsinn und Blödsinn.
+
+""","""
+#009
+Wie heißen die drei Sinne ? Schwachsinn ,Unsinn und Blödsinn
+""","""
+#010
+Ich mag es überhaupt nicht, wenn die Bettler auf der Straße ihren Becher mit den Münzen nach mir schütteln. Ich finde das schlimm, wenn die mir auch noch unter die Nase reiben, dass sie mehr Geld haben als ich.
+""","""
+#011
+Geht ein Stummer zum Arzt und schreibt auf seine Tafel: Ich kann nicht sprechen! Sagt der Arzt: Ok! Geben sie mal ihre Hand her! Der Mann schiebt seine Hand hin und der Arzt nimmt einen Hammer und schlägt auf die Hand seines Patienten. Aaaaaaaaahhhhhhh! Daraufhin der Arzt: Gut und morgen lernen wir den Buchstaben B.
+""","""
+#012
+""","""
+#013
+ Vorname vom Ritter ohne Rüstung:
+ Willhelm
+""","""
+#014
+Wenn Schwimmen schlank macht, was machen Blauwale falsch?
+""","""
+#015
+Ein Urlauber ruft in einem Kurhotel an, um sich zu erkundigen, wie es am besten zu finden sei.
+
+"Es ist nur einen Steinwurf vom Strand entfernt," erklärt ihm der Direktor.
+
+"Und wie kann ich es erkennen?"
+
+"Ganz einfach, es ist das Haus mit den zerbrochenen Fensterscheiben!"
+
+""","""
+#016
+Tagesschau: Dem Sprecher wird ein Zettel auf den Tisch gelegt. "Soeben erreicht uns noch eine Meldung: Sie haben einen Rest Spinat zwischen den Schneidezähnen."
+"""]
+blacklist = ['Huhre', 'huhrensohn', 'arschloch', 'dummkopf', 'scheiße', 'arschloch', 'bot test']
+spam = False
+spam_backup = True
+
+
+class MyClient(discord.Client,discord.Permissions):
+    bot = discord.Client()
+    async def on_ready(self):
+        print(
+            Fore.RED + "Ich habe mich eingeloggt beep bbop bot " + Fore.RESET)
+
+    # if message postet
+    async def on_message(self, message):
+
+        senden = message.channel.send
+        abfragen = message.content.startswith
+        if message.content.startswith("$math"):
+            thirst = message.content.split(" ")[1]
+            operation = message.content.split(" ")[2]
+            second = message.content.split(" ")[3]
+            thirst = int(thirst)
+            second = int(second)
+            ergebnis = 0
+            if operation == "+":
+                ergebnis = thirst + second
+                await message.channel.send(f"{thirst} + {second} = {ergebnis}")
+            elif operation == "/":
+                ergebnis = thirst / second
+                await message.channel.send(f"{thirst} / {second} = {ergebnis}")
+            elif operation == "-":
+                ergebnis = thirst - second
+                await message.channel.send(f"{thirst} - {second} = {ergebnis}")
+            elif operation == "*":
+                ergebnis = thirst * second
+                await message.channel.send(f"{thirst} * {second} = {ergebnis}")
+        if message.content.startswith("$yn"):
+            await message.add_reaction("👍")
+            await message.add_reaction("👎")
+        if message.content.startswith("$changelog"):
+            embed = discord.Embed(title="Changelog for 6.1.0", colour=discord.Colour(0xffffff),
+                                  url="https://discord.gg/FUAKNtg7bB",
+                                  description="Changelog für die gesamte version v6",
+                                  timestamp=datetime.datetime.utcfromtimestamp(1625325151))
+
+            embed.set_thumbnail(
+                url="https://cdn.discordapp.com/icons/853195738418511873/8d23b69c87e77f2010f2e9caca2e50ca.webp?size=1024")
+            embed.set_author(name="Tobias bot ",
+                             url="https://discord.com/api/oauth2/authorize?client_id=837230809102286849&permissions=8&redirect_uri=https%3A%2F%2Fdiscord.gg%2FaeeGbTKWyH&scope=bot",
+                             icon_url="https://cdn.discordapp.com/embed/avatars/0.png")
+
+            embed.add_field(name="**$anonym**", value="Sende anonyme Narichten")
+            embed.add_field(name="**$join**", value="Joine unserer Community")
+            embed.add_field(name="**$add**", value="Adde unseren bot ")
+            embed.add_field(name="**$changelog**", value="Zeige diese Naricht an ", inline=False)
+            embed.add_field(name="**$math**", value="Rechne +,-,/,* ")
+            embed.add_field(name="**$yn**", value="Ein minimalistiches Umfrage system")
+            embed.add_field(name="**$Joke**", value="Witze")
+            embed.add_field(name="**$Vote**", value="Vote für unseren bot")
+            embed.add_field(name="**$GF**", value="Stelle Fragen")
+            embed.add_field(name="Spam bug behoben,Mehrere (wörter) spammen",
+                            value="Du kannst nun mehrere wörter spammen", inline=False)
+
+            await message.channel.send(embed=embed)
+        if message.content.startswith("$GF")or message.content.startswith("$gf"):
+            antwort = fortune[random.randint(0,len(fortune))]
+            embed = discord.Embed(title="\nFrage von "+str(message.author), colour=discord.Colour(0xffffff),
+                                  description="\n "+message.content[4:len(message.content)])
+
+            embed.set_author(name="Glücksfrage")
+
+            embed.add_field(name="\nMeine Antwowort:", value="**"+antwort+"**")
+            await message.channel.send(embed=embed)
+        if message.content.startswith("$test"):
+            print("HI")
+
+        if message.content.startswith("$vote") or message.content.startswith("$vote"):
+            await message.channel.send("Hier kannst du voten: https://top.gg/bot/837230809102286849/vote")
+        if message.content.startswith("$stop"):
+            spam = False
+            print("Debug")
+        if message.content.startswith("$spam") and spam_backup:
+            spam = True
+            to = message.content.split(" ")[1]
+            to = int(to)
+            what = message.content.split(" ")[2]
+            if to >= 300:
+                await message.channel.send("10-299")
+                can = False
+            elif to <= 9:
+                await message.channel.send("10-299")
+                can = False
+            else:
+                can = True
+            if message.content[9] != " ":
+                what = message.content[9:len(message.content)]
+            else:
+                what = message.content[10:len(message.content)]
+            while True:
+                if spam == False:
+                    to -300
+                if can == False:
+                    break
+                if spam == True and spam_backup:
+                    await message.channel.send(what)
+                    to = to - 1
+                    time.sleep(1)
+                else:
+                    break
+                if to < 1:
+                    await message.channel.send("FERTIG")
+                    break
+
+        if message.author == client.user:
+            return
+        else:
+            print("Loglevel 2 : Naricht von " + str(message.author) + " enthält " + Fore.GREEN + str(
+                message.content)+" in: "+str(message.guild) + Fore.RESET)
+            if message.channel.id == 855082588908683265:
+                pass
+            else:
+                log_channel = client.get_channel(log_id)
+                await log_channel.send(f"Naricht von: anonym enthält: {str(message.content)} in: anonym ")
+        if abfragen("hallo bot"):
+            await message.channel.send('Hi ' + str(message.author))
+            await message.author.send("Ich hoffe es geht dir Gut")
+            await message.add_reaction("😎")
+        if message.content.startswith("$hallo"):
+            await message.channel.send('Hallo wie geht es dir? ' + str(message.author))
+            await message.author.send("Ich hoffe es geht dir Gut")
+            await message.add_reaction("😎")
+        if message.content.startswith("$help"):
+            await message.channel.send("""
+            Alle befehle:\n
+            $help hilft euch die befehle im blick zu behalten \n
+            $about infos zum bot\n
+            $news aktuelle news \n
+            $hallo \n
+            $GF stelle glücksfragen \n
+            $math Rechen +,-,*,/ \n
+            $Vote vote für unseren bot
+            $Joke Witze
+            $yn einfaches umfrage system \n
+            $anonym sendet eine anonyme naricht \n
+            $random bid(eine zahl zwichen 0 und 10)\n
+            $big_spin bid(eine Zahl zwichen 0 und 1000)\n
+            $flip_coin wirft eine Münze \n
+            $time (easteregg) die zeit im botland \n
+            $stats:
+                $stats_message content gibt euch die anzahl des geschriebenen wortes an
+            $blacklist listet euch die verbotenen befehle auf
+            $c19 listet covid daten von deutschland auf 
+            $date
+            $code zeigt euch den quellcode des bots
+            $rand_zit das wort zum sontag
+            $abo_ggde abos ggde(leider geht dies nur wenn das script auf dem pc von tobias läuft)
+            $say der bot wieder hohlt deinen text
+            $spam number word spammt das angegebene wort 
+            $move random move in einen sprachkanal(Du musst dich bereits in einem befinden)
+            $add adde diesen bot
+            $join joine unserer commyunity
+            experimentell:
+            die folgenden Befehle sind nur als test gedcht: \n
+            $Dm \n
+            $TTS \n
+            """)
+        if message.content.startswith("$move"):
+            channels = message.guild.voice_channels
+            channels= channels[random.randrange(0,len(channels))]
+            print(channels)
+            channel = await client.fetch_channel('853195738859438100')
+            await message.author.edit(voice_channel=channels,reason=None)
+        if message.content.startswith("$random"):
+            bid = message.content.split(' ')[1]
+            random_number = random.randrange(0, 10, 1)
+            bid = str(bid)
+            random_number = str(random_number)
+            print(random_number)
+            print(bid)
+            if bid == random_number:
+                await message.channel.send('Herzlichen glückwunsch ' + str(message.author) + "Du hast gewonnen")
+            if not bid == random_number:
+                await message.channel.send(
+                    'Schade' + str(message.author) + " hat verloren richtig war: " + str(random_number))
+        if message.content.startswith("$about"):
+            await message.channel.send("""
+            Dieser bot ging am 17.6.2021 online.\n
+            Er wurde von Tobias Programmiert.\n
+            Die idee eines bottes hatte er von Zehntnthomas \n
+            Spydro Craft hat dafür gesorgt das er 24/7 läuft
+            Die sprache ist python.Falls sie nicht wissen was python ist das sagt der entwickler:
+            Das Zen von Python von Tim Peters
+
+Schön ist besser als hässlich.
+Explizit ist besser als implizit.
+            Einfach ist besser als komplex.
+            Komplex ist besser als kompliziert.
+            Wohnung ist besser als verschachtelt.
+            Spärlich ist besser als dicht.
+            Lesbarkeit zählt.
+            Sonderfälle sind nicht speziell genug, um gegen die Regeln zu verstoßen.
+            Obwohl Praktikabilität die Reinheit übertrifft.
+            Fehler sollten niemals stillschweigend vergehen.
+            Sofern nicht ausdrücklich zum Schweigen gebracht.
+            Lehnen Sie angesichts der Zweideutigkeit die Versuchung ab, zu raten.
+            Es sollte einen - und vorzugsweise nur einen - offensichtlichen Weg geben, dies zu tun.
+            Obwohl dieser Weg zunächst vielleicht nicht offensichtlich ist, es sei denn, Sie sind Niederländer.
+            Jetzt ist besser als nie.
+            Obwohl nie oft besser ist als * gerade * jetzt.
+            Wenn die Implementierung schwer zu erklären ist, ist es eine schlechte Idee.
+            Wenn die Implementierung leicht zu erklären ist, kann dies eine gute Idee sein.
+            Namespaces sind eine großartige Idee - lasst uns mehr davon machen!
+            """)
+        if message.content.startswith("$time")and not message.content.startswith("$Timer")and not message.content.startswith("$timer"):
+            zeit = datetime.datetime.now()
+            zeit = str(zeit)
+            await message.channel.send(zeit)
+
+        if message.content.startswith("$XD") or message.content.startswith("$xD") or message.content.startswith("$xd"):
+            await senden("Herzlichen glückwunsch du hast ein easter egg gefunden ")
+
+        if abfragen("$big_spin"):
+            bid = message.content.split(' ')[1]
+            random_number = random.randrange(0, 1000, 1)
+            bid = str(bid)
+            random_number = str(random_number)
+            print(random_number)
+            print(bid)
+            if bid == random_number:
+                await message.channel.send('Herzlichen glückwunsch ' + str(message.author) + "Du hast gewonnen")
+            if not bid == random_number:
+                await message.channel.send(
+                    'Schade' + str(message.author) + " hat verloren richtig war: " + str(random_number))
+        if message.content.startswith("$flip_coin"):
+            coin = random.randrange(1, 3)
+            print(coin)
+            if coin == 2:
+                await message.channel.send("Kopf")
+            elif coin == 1:
+                await message.channel.send("Zahl")
+        if message.content.startswith("$Dm"):
+
+            await  message.author.send("Test")
+        if message.content.startswith("$TTS"):
+            await  message.author.send("Test", tts=True)
+        if message.content.startswith("$File"):
+            await  message.author.send(
+                "Tobias hatte noch keine zeit einen Rick roll rauszu suchen deswegen betrachte das als rick roll")
+        if message.content.startswith("$stats_message"):
+            word = message.content.split(' ')[1]
+            messages = await message.channel.history().flatten()
+            counter = 0
+            async for i in message.channel.history():
+                if i.content == word:
+                    counter = counter + 1
+            print(counter)
+            print(word)
+            await message.channel.send(counter)
+        if message.content.startswith("$add"):
+            await message.channel.send("https://top.gg/bot/837230809102286849")
+        if message.content.startswith("$join"):
+            await message.channel.send("https://discord.gg/FUAKNtg7bB")
+        if message.content.startswith("$anonym"):
+            my_message = message.content
+            await message.channel.send(my_message[8:len(my_message)])
+            await message.delete()
+        if message.content.startswith("$say"):
+            my_message = message.content
+            await message.channel.send(my_message[5:len(my_message)])
+        if message.content.lower() in blacklist and not message.author == client.user:
+            await client.on_message_delete(message)
+            await message.delete()
+            await message.channel.send("Bitte benutze nicht solche ausdrucksarten")
+        if message.content.startswith("$c19"):
+            Website = requests.get(r'https://www.corona-in-zahlen.de/weltweit/deutschland/')
+            soup = BeautifulSoup(Website.text, 'html.parser')
+            ausgabe = soup.find_all('div', {'class': 'card h-100'})
+            await message.channel.send(
+                "Covid stats aus Deutschland :<Daten von:https://www.corona-in-zahlen.de/weltweit/deutschland/> alle angaben ohne gewähr das oben zählt beispiel:")
+            await message.channel.send("""
+            einwohner
+            100
+            inzidenz
+            keine 100 einwohner sondern 100 inzidenz \n
+            ----------------------------------------\n
+
+
+
+
+
+
+
+
+
+            \n
+            """)
+            for i in ausgabe:
+                await message.channel.send(i.text)
+        if message.content.startswith("$blacklist"):
+            await message.channel.send(
+                "bitte nicht als beleidigung sehen das sind nur die Wörter.Auf der blacklist stehen:\n" + str(
+                    blacklist))
+        if message.content.startswith("$news"):
+            await message.channel.send('https://www.bild.de/news/newsticker/news/alle-news-54190480.bild.html#fromWall')
+            Website = requests.get('https://www.bild.de/news/newsticker/news/alle-news-54190480.bild.html')
+            soup = BeautifulSoup(Website.text, 'html.parser')
+            ausgabe = soup.find_all('p', {'class': 'entry-content'})
+            for i in ausgabe:
+                await message.author.send(i.text)
+                await message.author.send("---------------------------")
+            await message.channel.send("Bitte schaue in deine dierekt narichten")
+            await message.author.send("Natürlich sehr seriöse quelle")
+        if message.content.startswith("$rand_zit"):
+            await message.channel.send("https://zitatezumnachdenken.com/zufaellig")
+            await message.channel.send("Das wort zum sontag präsentiert:")
+            Website = requests.get("https://zitatezumnachdenken.com/zufaellig")
+            print(Website.status_code)
+            soup = BeautifulSoup(Website.text, 'html.parser')
+            ausgabe = soup.find_all('div', {'class': 'quote'})
+            for i in ausgabe:
+                await message.channel.send(i.text)
+                await message.channel.send("-"*40)
+            await message.channel.send("Alle schlaue leute")
+
+        if message.content.startswith("$date"):
+            await message.channel.send(datetime.datetime.now())
+        if message.content.startswith("$code"):
+            await message.channel.send(
+                "Den code findest du unter : https://github.com/Tobias2021/dcbot_german")
+        coldown = False
+        if message.content.startswith("$abo_ggde"):
+            if coldown == False:
+                await message.channel.send("Setze coldown")
+                coldown = True
+                await message.channel.send("Starte edge")
+                try:
+                    driver = webdriver.Edge(r'C:\Users\tobia\PycharmProjects\Selenium\msedgedriver.exe')
+                    driver.get('https://www.youtube.com/user/GermanTrophyGuide')
+                    await message.channel.send("Starte yt")
+                    time.sleep(3)
+                    search_field = driver.find_elements_by_class_name('button')
+                    await message.channel.send("Datenschutz zeugs")
+                    search_field = search_field[2]
+                    search_field.click()
+                    await message.channel.send("Kanal offen")
+                    abos = driver.find_element_by_id('subscriber-count')
+                    abos = driver.find_element_by_class_name('style-scope ytd-c4-tabbed-header-renderer')
+                    await message.channel.send(
+                        "ggde hat gerade: " + abos.text[15] + abos.text[16] + abos.text[17] + abos.text[18] + abos.text[
+                            19] + abos.text[20] + abos.text[21] + abos.text[22] + abos.text[23] + abos.text[24] +
+                        abos.text[
+                            25] + abos.text[26] + abos.text[27] + abos.text[28] + abos.text[29] + abos.text[30] +
+                        abos.text[
+                            31] + abos.text[32])
+                except FileNotFoundError:
+                    await message.channel.send("Error")
+                await message.channel.send("resete timer")
+                driver.quit()
+                coldown = False
+        if message.content.startswith("$joke") or message.content.startswith("$Joke"):
+            random_my = random.randint(0,2)
+            if random_my == 0 or random_my == 1:
+                the_joke = jokes[random.randint(0,len(jokes))]
+                await message.channel.send(the_joke)
+            else:
+                await message.channel.send("Internet witz")
+                Website = requests.get(r'http://witze.de/zufällige-witze')
+                soup = BeautifulSoup(Website.text, 'html.parser')
+                ausgabe = soup.find_all('div', {'class': 'joke'})
+                for i in ausgabe:
+                    await message.channel.send(i.text)
+                    await message.channel.send("------------------------------------------")
+        gestz = True
+        if message.content.startswith("§"):
+            if gestz:
+                await message.channel.send(
+                    "Ich glaube du meintest $ aber wenn nicht dann muss ich in die ecke weinen gehe weil mich niemand mag")
+        if message.content.startswith("$Timer") or message.content.startswith("$timer"):
+            to = message.content.split(" ")[1]
+            to = int(to)
+            what = message.content[8+len(str(to)):len(message.content)]
+            print(what)
+            print(to)
+            time.sleep(to)
+            await message.channel.send(what)
+
+
+
+    async def on_typing(self, channel, user, when):
+        print("Log level 1:" + str(user) + "tippt gerade in " + str(channel) + "  seit: " + str(
+            when) + "Abweichung je nach zeitzone")
+
+    async def on_message_delete(self, message):
+        print(colorama.Fore.RED)
+        print("Log level 3 (Bitte um überprüfung):  Gelöchte Naricht: " + message.content)
+        print("Autor = frühere logs")
+        print(colorama.Fore.RESET)
+
+    async def on_message_edit(self, before, after):
+        print(colorama.Fore.YELLOW)
+        print("Log level 2: Naricht bearbeitet: Vorher: " + before.content + " Nacher: " + after.content)
+        print(colorama.Fore.RESET)
+
+    async def on_member_update(self, after, before):
+        print("-" * 40 + "after" + "-" * 40)
+        print(str(after.joined_at))
+        print(str(after.activities))
+        print(str(after.nick))
+        print(str(after.mobile_status))
+        print(str(after.desktop_status))
+        print(str(after.web_status))
+        print(str(after.guild))
+        print(str(after.roles))
+        print("-" * 40 + "before" + "-" * 40)
+        print(str(before.joined_at))
+        print(str(before.activities))
+        print(str(before.nick))
+        print(str(before.mobile_status))
+        print(str(before.desktop_status))
+        print(str(before.web_status))
+        print(str(before.guild))
+        print(str(before.roles))
+
+
+
+client = MyClient()
+client.run("xxx")  # enter your Token
+
