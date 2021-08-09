@@ -377,5 +377,5 @@ Explizit ist besser als implizit.
         print(colorama.Fore.RESET)
 
 client = MyClient()
-token_my = client.run("ODM3MjMwODA5MTAyMjg2ODQ5.YIph8w.rfB3N7zgNnxY18ZfUpRQ_ccyl8U")  # enter your Token
+token_my = client.run("xxx")  # enter your Token
 token_my
